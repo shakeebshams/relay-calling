@@ -32,3 +32,27 @@ const server = _server.listen(port, function() {
 
 const app = relay({server})
 app.workflow(`tweet`, tweet)
+
+_server.post('/new', async(req, res) => {
+    let name = req.body.name
+    let email = req.body.email
+    let relay_label = req.body.relay_label
+    let pd_id = req.body.pd_id
+    let pd_api_token = req.body.pd_api_token
+    const user = new UserDB({
+        pd_id: pd_id,
+        relay_label: relay_label,
+        name: name,
+        email: email,
+        pd_api_token: pd_api_token
+    })
+
+    user.save(function(err){
+        if (!err){
+            res.sendFile(path.join(__dirname, '/views/recieved.html'))
+        } else {
+            console.log(err)
+        }
+    })
+
+})
