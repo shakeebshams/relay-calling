@@ -24,6 +24,24 @@ const createApp = (relay) => {
             await relay.terminate()
         }
     })
+
+    relay.on(Event.NOTIFICATION, async (notificationEvent) => {
+        console.log(`Got notification update: ${JSON.stringify(notificationEvent)}`)
+        let source = notificationEvent.source
+        let email
+        let api_key
+        let user
+        await UserDB.findOne({relay_label: source}, function(err, doc) {
+            if (doc) {
+                email = doc.email
+                api_key = doc.pd_api_token
+                user = doc.name
+            }
+            else {
+                console.log(`${source} not found within UserDB`)
+            }
+        })  
+    });
 }
 
 export default createApp
